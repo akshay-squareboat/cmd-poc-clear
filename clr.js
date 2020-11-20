@@ -3,7 +3,7 @@
 var program = require('commander');
 var script = require('./script');
 
-program.command('init').action((options) => {
+program.command('login').action((options) => {
   script.initProcess();
 });
 

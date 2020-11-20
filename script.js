@@ -2,14 +2,13 @@
 const axios = require('axios');
 var chalk = require('chalk');
 var inquirer = require('inquirer');
-var opener = require('open');
 const readline = require('readline');
 const urls = require('./urls');
 var fs = require('fs');
 
-print = console.log;
-green = chalk.green;
-red = chalk.red;
+const printf = console.log;
+const green = chalk.green;
+const red = chalk.red;
 
 async function initProcess() {
   const rl = readline.createInterface({
@@ -27,12 +26,12 @@ async function initProcess() {
         try {
           fs.writeFileSync('token.json', JSON.stringify({ authToken }));
         } catch (err) {
-          print(red(err));
+          printf(red(err));
         }
-        print(green('Authentication Successfull.'));
+        printf(green('Authentication Successfull.'));
       })
       .catch((err) => {
-        print(
+        printf(
           red('Authentication Failed ! Please enter correct Access Token.')
         );
       });
@@ -68,34 +67,35 @@ async function projectListing() {
         if (response.data.data.length > 0) {
           const projects = response.data.data;
           const choices = constructProjectsFormatting(projects);
-          inquirer.prompt(
-            [
+          inquirer
+            .prompt([
               {
                 type: 'list',
                 name: 'url',
                 message: 'Assigned Project',
-                message: 'Project',
                 choices: choices,
                 pageSize: 20,
               },
-            ],
-            function (answers) {
-              console.log('this is the selected one');
-            }
-          );
+            ])
+            .then((answers) => {
+              printf('this is the answers', answers);
+            })
+            .catch((err) => {
+              printf(err);
+            });
         } else {
           console.log('No Projects Assigned to you.');
         }
       })
       .catch((err) => {
         if (err.response.status === 401) {
-          print(red('Error : Please authenticate yourself !'));
+          printf(red('Error : Please authenticate yourself !'));
         } else {
-          print(red('Error !', err));
+          printf(red('Error !', err));
         }
       });
   } else {
-    print(red('Please authenticate yourself first !'));
+    printf(red('Please authenticate yourself first !'));
   }
 }
 
@@ -106,7 +106,6 @@ function constructChoices(posts) {
   posts.forEach(function (post, index) {
     var choice = {
       name: `${post.id} ----- ${post.title}`,
-      short: post.body,
       value: `https://jsonplaceholder.typicode.com/posts/${post.id}`,
     };
     choices.push(choice);
@@ -122,21 +121,22 @@ async function listAllData(pageSize) {
   );
   var choices = constructChoices(response.data);
   //   var open = options.open || false;
-  inquirer.prompt(
-    [
+  inquirer
+    .prompt([
       {
         type: 'list',
         name: 'url',
-        message: 'Medium - Top Stories',
         message: 'Select the Post to read :',
         choices: choices,
         pageSize,
       },
-    ],
-    function (answers) {
-      console.log('this is the selected one');
-    }
-  );
+    ])
+    .then((answers) => {
+      printf(answers);
+    })
+    .catch((err) => {
+      printf(err);
+    });
 }
 
 async function PostDetail(uuid) {
