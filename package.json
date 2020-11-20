@@ -15,5 +15,8 @@
     "inquirer": "^7.3.3",
     "open": "^7.3.0",
     "prompt": "^1.0.0"
+  },
+  "bin": {
+    "clear-cli": "clr.js"
   }
 }
